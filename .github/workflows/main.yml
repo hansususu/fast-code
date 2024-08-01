@@ -11,7 +11,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1 # 가장 최근 commit의 히스토리만 가져옴
       - name: Configure AWS credentials
