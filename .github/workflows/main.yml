@@ -15,11 +15,11 @@ jobs:
         with:
           fetch-depth: 1 # 가장 최근 commit의 히스토리만 가져옴
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          AWS_REGION: 'ap-northeast-2'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          aws-region: ap-northeast-2
       - name: Set Variables
         id: set-var
         run: |
@@ -43,33 +43,33 @@ jobs:
     # - name: Execute maven build
     #   run: mvn clean package
 
-      - name: Docker Image Build
-        id: build-image
-        run: |
-          docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
+    - name: Docker Image Build
+      id: build-image
+      run: |
+        docker build -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
 
-      - name: Docker image Push
-        id: push-image
-        run: |
-          docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+    - name: Docker image Push
+      id: push-image
+      run: |
+        docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
 
-      - name: Checkout Deployment Repository
-        uses: actions/checkout@v4
-        with:
-          repository: hansususu/deployment #본인에 맞게 수정
-          ref: main  # branch
-          token: ${{ secrets.GH_TOKEN }}
+    - name: Checkout Deployment Repository
+      uses: actions/checkout@v4
+      with:
+        repository: hansususu/deployment #본인에 맞게 수정
+        ref: main  # branch
+        token: ${{ secrets.GH_TOKEN }}
 
-      - name: k8s manifest update
-        run: |
-          sed -i "s@ \
-          image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:.*@ \
-          image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}@g" deployment.yml
+    - name: k8s manifest update
+      run: |
+        sed -i "s@ \
+        image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:.*@ \
+        image: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}@g" deployment.yml
 
-      - name: Commit and Push
-        run: |
-          git config user.email ${{ env.GIT_EMAIL }}
-          git config user.name ${{ env.GIT_NAME }}
-          git add deployment.yml
-          git commit -m "Update image tag"
-          git push origin main
+    - name: Commit and Push
+      run: |
+        git config user.email ${{ env.GIT_EMAIL }}
+        git config user.name ${{ env.GIT_NAME }}
+        git add deployment.yml
+        git commit -m "Update image tag"
+        git push origin main
