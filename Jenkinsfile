@@ -8,12 +8,13 @@ pipeline {
         GITCREDENTIAL = 'git_cre'
         DOCKERHUB = 'hansubbbb/fast'
         DOCKERHUBCREDENTIAL = 'docker_cre'
+        SLACK_CREDENTIAL = 'slack_cre'
     }
     stages {
         stage('Checkout Github') {
             steps {
                 slackSend (
-                    channel: '#dep02',
+                    channel: '#dep01',
                     color: '#FFFF00',
                     message: "STARTED: ${currentBuild.number}"
                 )
