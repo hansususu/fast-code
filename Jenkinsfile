@@ -24,6 +24,12 @@ pipeline {
                 }
             }
         }
+        stage('Docker build') {
+            steps{
+                sh "docker build -t ${DOCKERHUB}:${currentBuild.number} ."
+                sh "docker build -t ${DOCKERHUB}:latest ."
+            }
+        }
         stage('start') {
             steps {
                 sh "echo hello jenkins!!!"
