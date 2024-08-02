@@ -12,6 +12,11 @@ pipeline {
     stages {
         stage('Checkout Github') {
             steps {
+                slackSend (
+                    channel: '#dep02',
+                    color: '#FFFF00',
+                    message: "STARTED: ${currentBuild.number}"
+                )
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [],
                 userRemoteConfigs: [[credentialsId: GITCREDENTIAL, url: GITWEBADD]]])
             }
