@@ -24,15 +24,18 @@ pipeline {
                 }
             }
         }
-        stage('Docker build') {
+        stage('Docker image build') {
             steps{
                 sh "docker build -t ${DOCKERHUB}:${currentBuild.number} ."
                 sh "docker build -t ${DOCKERHUB}:latest ."
             }
         }
-        stage('start') {
+        stage('Docker image push') {
             steps {
-                sh "echo hello jenkins!!!"
+                 withDockerRegistry(credentialsId: DOCKERHUBCREDENTIAL, url: '') {
+                    sh "docker push ${DOCKERHUB}:${currentBuild.number}"
+                    sh "docker push ${DOCKERHUB}:latest"
+                 }
             }
             post {
                 failure {
