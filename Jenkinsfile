@@ -3,7 +3,7 @@ pipepine {
     stages {
         stage('start') {
             steps {
-                sh "hello jenkins"
+                sh "echo hello jenkins"
             }
         }
     }
